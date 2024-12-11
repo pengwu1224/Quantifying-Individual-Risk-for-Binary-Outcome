@@ -21,7 +21,7 @@ Reproducible code for simulation and application in the article "Quantifying Ind
 - GenData.R: data-generating mechanisms for cases (C1)-(C6). 
 
 
-- Simulation code for estimating FNA, which use "EstFun.R" to estimate the estimand and "GenData.R" to generate the simulated datasets.  
+- Simulation code, which utilizes 'EstFun.R' for estimating FNA and 'GenData.R' for generating simulated datasets. 
   - MainCase1.R: main code for simulation case (C1).   
   - MainCase2.R: main code for simulation case (C2).
   - MainCase3.R: main code for simulation case (C3).   
