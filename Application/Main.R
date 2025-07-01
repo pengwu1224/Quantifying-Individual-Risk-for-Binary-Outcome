@@ -1,5 +1,7 @@
 # Encoding: UTF-8
 
+setwd('~/Desktop/JRSSB_Response/5-Application')
+
 rm(list = ls( ))
 
 # ---------------------- read the data ----------------------
@@ -140,42 +142,9 @@ mean(psi.1 - psi.0)                  # DR
 sd(psi.1 - psi.0) / sqrt(n)
 
 # value ranges of rho, restricted by Frechet Hoeffiding Bounds
-L_rho <- max(-(1-mu0)*(1-mu1),  -mu0*mu1)/sqrt(mu0*(1-mu0)*mu1*(1-mu1))
-U_rho <- min( mu0*(1-mu1),  (1-mu0)*mu1)/sqrt(mu0*(1-mu0)*mu1*(1-mu1))
+L_rho <- pmax(-(1-mu0)*(1-mu1),  -mu0*mu1)/sqrt(mu0*(1-mu0)*mu1*(1-mu1))
+U_rho <- pmin( mu0*(1-mu1),  (1-mu0)*mu1)/sqrt(mu0*(1-mu0)*mu1*(1-mu1))
 
-
-dat.plot <- data.frame(
-  case = rep(c('Low Bounds', 'Upper Bounds'), each = n),
-  rho = c(L_rho, U_rho))
-
-library(ggplot2)
-p = ggplot(dat.plot, aes(x=rho)) + 
-  geom_histogram(aes(fill = case), 
-                 bins = 50,
-                 position = 'dodge',# 'identity', 
-                 # position = position_dodge(width = 0.2),
-                 alpha = 0.5)   +
-  facet_grid(.~ case, scales = 'free') + 
-  theme_bw() + 
-  labs( x = expression(paste('Estimated Bounds of ', {rho}(x))), # 'Correlation coefficient (rho(x))', 
-        y = 'Number of Units') +
-  theme(legend.position = 'NULL',
-        strip.background = element_rect(color= 'white', fill = 'white'),
-        # panel.grid = element_blank(),
-        #text = element_text(family = "Times New Roman"),
-        plot.title    = element_text(family = "Times New Roman"),
-        plot.subtitle = element_text(family = "Times New Roman"),
-        axis.title.x  = element_text(size = 12, family = "Times New Roman"),
-        axis.title.y  = element_text(size = 12, family = "Times New Roman"),
-        axis.text.x   = element_text(family = "Times New Roman"),
-        axis.text.y   = element_text(family = "Times New Roman"),
-        axis.text = element_text(size = 12))  
-  
-p
-
-
-# quantile(L_rho, probs = seq(0,1, by = 0.05))
-quantile(U_rho,  probs = seq(0,1, by = 0.05))
 
 # Frechet Hoeffiding Bounds
 FH_low <- mean(pmax(mu0-mu1, 0))
@@ -183,8 +152,10 @@ FH_up <- mean(pmin(mu0, 1-mu1))
 FH_low
 FH_up
 
+
 # estimate the bound on FNA for a given set of rho
-rho.lst <- seq(0.0, 0.3, 0.05)    # specify the value of rho
+rho.lst <- seq(-0.45, 0.70, 0.05)    # specify the value of rho
+rho.lst <- c(rho.lst, 0.706)
 
 RES <- data.frame(matrix(nrow = length(rho.lst), ncol = 3))
 names(RES) <- c('rho', 'est.beta',  'ese')
@@ -230,10 +201,18 @@ ggplot(data = RES) +
   geom_hline(aes(yintercept = FH_up), linetype = 'dotted',linewidth=1,  col = 'blue') + 
   geom_line(aes(x = rho, y = est.beta), linewidth = 0.6, col = 'red') + 
   theme_bw() +  
+  geom_point(aes(x = 0.00, y = 0.2073), color = "red", size = 2.5) +
+  geom_text(aes(x = 0.00, y = 0.2073, label = '(0.00, 0.207)'), size =3.5,
+            vjust = -1.5, hjust=-0.05, color = "purple") + 
+  geom_point(aes(x = -0.45, y = 0.2896), color = "red", size = 2.5) +
+  geom_text(aes(x = -0.45, y = 0.2896, label = '(-0.45, 0.290)'), size =3.5, 
+            vjust = -1.5, color = "purple") + 
   labs(x = expression(paste('rho (', rho,')')), y = 'Bounds on FNA') + 
+  geom_point(aes(x = 0.706, y = 0.0742), color = "red", size = 2.5) +
+  geom_text(aes(x = 0.706, y = 0.0742, label = '(0.706, 0.074)'), size =3.5,
+            vjust = -1.5, hjust=0.8, color = "purple") + 
   scale_y_continuous(breaks = seq(0, 0.3, by = 0.05)) +
-  coord_cartesian(ylim = c(0.05, 0.32), xlim = c(0.0, 0.3)) +
-  theme(axis.title.x  = element_text(size = 12, family = "Times New Roman"),
-        axis.title.y  = element_text(size = 12, family = "Times New Roman"),
-        strip.text.x = element_text(size = 12))
-
+  coord_cartesian(ylim = c(0.05, 0.32), xlim = c(-0.55, 0.75)) +
+  theme(axis.title.x  = element_text(size = 14, family = "Times New Roman"),
+        axis.title.y  = element_text(size = 14, family = "Times New Roman"),
+        strip.text.x = element_text(size = 16))
