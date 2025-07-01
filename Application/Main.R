@@ -1,7 +1,5 @@
 # Encoding: UTF-8
 
-setwd('~/Desktop/JRSSB_Response/5-Application')
-
 rm(list = ls( ))
 
 # ---------------------- read the data ----------------------
